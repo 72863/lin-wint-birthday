@@ -9,58 +9,62 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
-            --bg-color: #2b1215;
-            --card-bg: #40191d;
-            --accent-color: #d4a373;
+            --bg-color: #1a080a;
+            --card-bg: rgba(64, 25, 29, 0.85);
+            --accent-color: #f4acb7;
             --text-color: #fefae0;
-            --soft-text: #dda15e;
+            --soft-text: #ffb703;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pyidaungsu', 'Outfit', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        body { background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-x: hidden; }
         
-        /* Password Screen */
+        /* Password Screen with Butterfly Background */
         #lock-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-color); z-index: 9999; display: flex;
-            flex-direction: column; justify-content: center; align-items: center; padding: 20px;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('image_16.png') no-repeat center center/cover;
+            z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px;
         }
-        .lock-box { background: var(--card-bg); padding: 30px; border-radius: 15px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.5); width: 100%; max-width: 350px; }
-        .lock-box h2 { margin-bottom: 15px; font-size: 20px; color: var(--accent-color); }
-        .lock-box input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--soft-text); background: #2b1215; color: white; text-align: center; font-size: 18px; letter-spacing: 3px; }
-        .lock-box button { background: var(--accent-color); color: #2b1215; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; }
+        .lock-box { background: rgba(43, 18, 21, 0.8); backdrop-filter: blur(10px); padding: 35px; border-radius: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 100%; max-width: 350px; border: 1px solid rgba(244, 172, 183, 0.3); }
+        .lock-box h2 { margin-bottom: 15px; font-size: 20px; color: var(--accent-color); text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .lock-box input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 10px; border: 1px solid var(--accent-color); background: rgba(0,0,0,0.5); color: white; text-align: center; font-size: 18px; letter-spacing: 4px; outline: none; }
+        .lock-box button { background: var(--accent-color); color: #1a080a; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; transition: 0.3s; }
+        .lock-box button:hover { background: #ffccd5; transform: scale(1.02); }
 
         /* Main Container */
-        .container { width: 100%; max-width: 480px; background: var(--bg-color); min-height: 100vh; padding: 20px; display: none; flex-direction: column; gap: 25px; padding-bottom: 50px; }
+        .container { width: 100%; max-width: 480px; background: var(--bg-color); min-height: 100vh; padding: 20px; display: none; flex-direction: column; gap: 25px; padding-bottom: 50px; animation: fadeIn 1s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .header { text-align: center; font-size: 14px; letter-spacing: 2px; color: var(--soft-text); text-transform: uppercase; }
-        .main-title { text-align: center; font-size: 24px; color: var(--text-color); margin-top: 5px; font-weight: bold; }
+        .header { text-align: center; font-size: 13px; letter-spacing: 3px; color: var(--soft-text); text-transform: uppercase; font-weight: 600; }
+        .main-title { text-align: center; font-size: 22px; color: var(--text-color); margin-top: 5px; font-weight: bold; text-shadow: 0 2px 10px rgba(244,172,183,0.3); }
 
-        .card { background: var(--card-bg); border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-align: center; position: relative; }
-        .card img { width: 100%; border-radius: 12px; object-fit: cover; margin-top: 10px; }
+        .card { background: var(--card-bg); backdrop-filter: blur(12px); border-radius: 24px; padding: 22px; box-shadow: 0 8px 25px rgba(0,0,0,0.4); text-align: center; position: relative; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.3s; }
+        .card:hover { transform: translateY(-3px); }
+        .card img { width: 100%; border-radius: 16px; object-fit: cover; margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         
-        .note-text { text-align: left; line-height: 1.8; font-size: 15px; margin-top: 10px; opacity: 0.9; }
+        .note-text { text-align: left; line-height: 1.9; font-size: 15px; margin-top: 10px; opacity: 0.95; }
         
-        .grid-reasons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; text-align: left; }
-        .reason-item { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; font-size: 14px; }
-        .reason-num { color: var(--accent-color); font-weight: bold; display: block; font-size: 12px; }
+        .grid-reasons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; text-align: left; }
+        .reason-item { background: rgba(255,255,255,0.06); padding: 14px; border-radius: 12px; font-size: 14px; border: 1px solid rgba(255,255,255,0.04); }
+        .reason-num { color: var(--soft-text); font-weight: bold; display: block; font-size: 12px; margin-bottom: 3px; }
 
         .tags-box { display: flex; justify-content: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
-        .tag { background: #d4a373; color: #2b1215; padding: 6px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; }
+        .tag { background: var(--accent-color); color: #1a080a; padding: 6px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; box-shadow: 0 2px 8px rgba(244,172,183,0.3); }
 
         /* Music Player */
-        .music-player { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .vinyl { width: 120px; height: 120px; border-radius: 50%; background: #111; border: 4px solid #333; display: flex; justify-content: center; align-items: center; animation: spin 4s linear infinite; animation-play-state: paused; margin: 10px auto; }
+        .music-player { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .vinyl { width: 130px; height: 130px; border-radius: 50%; background: #111; border: 4px solid #333; display: flex; justify-content: center; align-items: center; animation: spin 4s linear infinite; animation-play-state: paused; margin: 10px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .vinyl.playing { animation-play-state: running; }
-        .vinyl-inner { width: 40px; height: 40px; background: var(--accent-color); border-radius: 50%; }
+        .vinyl-inner { width: 45px; height: 45px; background: var(--accent-color); border-radius: 50%; border: 2px dashed #111; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        .play-btn { background: var(--accent-color); color: #2b1215; border: none; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; margin-top: 5px; }
+        .play-btn { background: var(--accent-color); color: #1a080a; border: none; padding: 10px 24px; border-radius: 25px; cursor: pointer; font-weight: bold; margin-top: 5px; box-shadow: 0 4px 12px rgba(244,172,183,0.3); transition: 0.2s; }
+        .play-btn:hover { background: #ffccd5; transform: scale(1.05); }
 
         /* QR Section */
-        .qr-container { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 20px; }
-        #qrcode { background: white; padding: 10px; border-radius: 10px; }
+        .qr-container { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 15px; }
+        #qrcode { background: white; padding: 12px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
 
         .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
-        .gallery-grid img { height: 160px; }
+        .gallery-grid img { height: 170px; border-radius: 12px; }
     </style>
 </head>
 <body>
@@ -68,7 +72,7 @@
     <!-- Password Screen -->
     <div id="lock-screen">
         <div class="lock-box">
-            <h2>🔒 Enter Password</h2>
+            <h2>🦋 Enter Password 🦋</h2>
             <input type="password" id="passcode-input" placeholder="•••••">
             <button onclick="checkPassword()">ဝင်မည်</button>
         </div>
@@ -81,26 +85,26 @@
 
         <!-- Top Illustration Card -->
         <div class="card">
-            <h3 style="color: var(--soft-text); font-size: 14px; margin-bottom: 5px;">HAPPY BIRTHDAY</h3>
+            <h3 style="color: var(--soft-text); font-size: 13px; margin-bottom: 5px; letter-spacing: 1px;">HAPPY BIRTHDAY</h3>
             <img src="watermarked_img_7962830949458966425.jpg" alt="Birthday Illustration">
-            <p style="margin-top: 10px; font-weight: bold; color: var(--accent-color);">Happy Birthday Lin Wint! ✨</p>
+            <p style="margin-top: 12px; font-weight: bold; color: var(--accent-color); font-size: 16px;">Happy Birthday Lin Wint! ✨</p>
         </div>
 
         <!-- Birthday Note -->
         <div class="card" style="text-align: left;">
-            <div style="font-size: 13px; color: var(--soft-text); text-transform: uppercase;">A BIRTHDAY NOTE</div>
-            <h3 style="margin: 5px 0 15px 0; color: var(--accent-color);">Ma Lin Wint ရေ...</h3>
+            <div style="font-size: 12px; color: var(--soft-text); text-transform: uppercase; letter-spacing: 1px;">A BIRTHDAY NOTE</div>
+            <h3 style="margin: 6px 0 15px 0; color: var(--accent-color);">Ma Lin Wint ရေ...</h3>
             <p class="note-text">
                 ဒီနေ့မှာ ကျရောက်တဲ့ အမရဲ့ မွေးနေ့သည် ရှေ့ဆက်လျှောက်လှမ်းမယ့် နှစ်ပေါင်းများစွာအထိ စိတ်၏ချမ်းသာခြင်း၊ ကိုယ်၏ကျန်းမာခြင်းတို့နဲ့ ပြည့်စုံပါစေ။<br><br>
                 အမနဲ့ ခင်ခွင့်ရတာ၊ အမဆီက ကောင်းမွန်တဲ့ အကြံဉာဏ်တွေ၊ အကူအညီတွေ ရရှိခဲ့တာဟာ ကျွန်တော်အတွက် အမြဲတမ်း ဝမ်းသာစရာပါ။ အမရဲ့ သဘောထားပြည့်ဝမှုနဲ့ ကြိုးစားမှုတွေကိုလည်း အမြဲ လေးစားအားကျရပါတယ်။<br><br>
-                ဒီနှစ်မှာ အမလိုချင်တဲ့ ရည်မှန်းချက်တွေ၊ အိမ်မက်တွေ အကုန်လုံး အမြန်ဆုံး အကောင်အထည်ပေါ်ပြီး၊ စီးပွား/လုပ်ငန်းကိုင်ငန်း/ပညာရေးတွေလည်း ဒီထက်မက အောင်မြင်တိုးတက်ပါစေ။ အမဲတမ်း စိတ်ချမ်းသာ အပြုံးပုတွေ ပွင့်လန်းနိုင်ပါစေ။ 🌸
+                ဒီနှစ်မှာ အမလိုချင်တဲ့ ရည်မှန်းချက်တွေ၊ အိမ်မက်တွေ အကုန်လုံး အမြန်ဆုံး အကောင်အထည်ပေါ်ပြီး၊ စီးပွား/လုပ်ငန်းကိုင်ငန်း/ပညာရေးတွေလည်း ဒီထက်မက အောင်မြင်တိုးတက်ပါစေ။ အမြဲတမ်းစိတ်ချမ်းသာ အပြုံးတွေပွင့်လန်းနိုင်ပါစေ။ 🌸
             </p>
         </div>
 
         <!-- Memories Gallery -->
         <div class="card">
-            <div style="font-size: 13px; color: var(--soft-text); text-transform: uppercase;">ONE OF MY FAVOURITE MOMENTS</div>
-            <h3 style="margin: 5px 0; color: var(--accent-color);">အမနဲ့ ခင်ခွင့်ရတာ</h3>
+            <div style="font-size: 12px; color: var(--soft-text); text-transform: uppercase; letter-spacing: 1px;">ONE OF MY FAVOURITE MOMENTS</div>
+            <h3 style="margin: 6px 0; color: var(--accent-color);">အမနဲ့ ခင်ခွင့်ရတာ</h3>
             <div class="gallery-grid">
                 <img src="image_6.png" alt="Memory 1">
                 <img src="image_7.png" alt="Memory 2">
@@ -111,7 +115,7 @@
 
         <!-- Reasons Why I Appreciate You -->
         <div class="card" style="text-align: left;">
-            <div style="font-size: 13px; color: var(--soft-text); text-transform: uppercase; text-align: center;">အမနဲ့ ခင်ခင်ရတဲ့ အကြောင်းများ</div>
+            <div style="font-size: 12px; color: var(--soft-text); text-transform: uppercase; text-align: center; letter-spacing: 1px;">အမနဲ့ ခင်ခင်ရတဲ့ အကြောင်းများ</div>
             <div class="grid-reasons">
                 <div class="reason-item"><span class="reason-num">01</span>အမက ခင်တတ်တယ်</div>
                 <div class="reason-item"><span class="reason-num">02</span>အမြဲတမ်း ကူညီတတ်တယ်</div>
@@ -122,11 +126,11 @@
 
         <!-- Music Player Card -->
         <div class="card music-player">
-            <div style="font-size: 13px; color: var(--soft-text); text-transform: uppercase;">THIS SONG REMINDS ME OF YOU</div>
+            <div style="font-size: 12px; color: var(--soft-text); text-transform: uppercase; letter-spacing: 1px;">THIS SONG REMINDS ME OF YOU</div>
             <div class="vinyl" id="vinyl">
                 <div class="vinyl-inner"></div>
             </div>
-            <div style="font-weight: bold; font-size: 15px;">Justin Bieber — Mistletoe</div>
+            <div style="font-weight: bold; font-size: 15px; color: var(--text-color);">Justin Bieber — Mistletoe</div>
             <button class="play-btn" onclick="toggleMusic()">▶ သီချင်းဖွင့်ရန်</button>
             <audio id="bg-music" loop>
                 <source src="https://cdns-preview--d.dzcdn.net/stream/c-deda73b7f83731114b77873830c29753-3.mp3" type="audio/mp3">
@@ -135,32 +139,32 @@
 
         <!-- Three Words Card -->
         <div class="card">
-            <div style="font-size: 13px; color: var(--soft-text); text-transform: uppercase;">IF I HAD TO DESCRIBE YOU IN THREE WORDS</div>
+            <div style="font-size: 12px; color: var(--soft-text); text-transform: uppercase; letter-spacing: 1px;">IF I HAD TO DESCRIBE YOU IN THREE WORDS</div>
             <div class="tags-box">
                 <span class="tag">အရက်သောက်</span>
                 <span class="tag">အရင်မှောက်</span>
             </div>
-            <p style="margin-top: 15px; font-size: 14px; opacity: 0.9;">အရက်သောက်တိုင်း အမြဲတမ်း အရင်အိပ်လို့ :) ✨</p>
+            <p style="margin-top: 15px; font-size: 14px; opacity: 0.95;">အရက်သောက်တိုင်း အမြဲတမ်း အရင်အိပ်လို့ :) ✨</p>
         </div>
 
         <!-- Letter Card -->
         <div class="card" style="text-align: left;">
-            <div style="font-size: 13px; color: var(--soft-text); text-transform: uppercase; text-align: center;">A LETTER FOR YOU</div>
-            <h3 style="margin: 5px 0 10px 0; color: var(--accent-color); text-align: center;">အမအတွက် စာလေးတစ်စောင်</h3>
+            <div style="font-size: 12px; color: var(--soft-text); text-transform: uppercase; text-align: center; letter-spacing: 1px;">A LETTER FOR YOU</div>
+            <h3 style="margin: 6px 0 12px 0; color: var(--accent-color); text-align: center;">အမအတွက် စာလေးတစ်စောင်</h3>
             <p class="note-text">
                 အမနဲ့ ခင်ခွင့်ရတာဟာ ကျွန်တော့်အတွက် အမြဲတမ်း ဝမ်းသာစရာပါ။ အမဆီက ရခဲ့တဲ့ အကြံဉာဏ်နဲ့ အကူအညီတွေကိုလည်း မမေ့ပါဘူး။
             </p>
             <div class="gallery-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 15px;">
-                <img src="image_10.png" alt="Letter Pic 1" style="height: 100px;">
-                <img src="image_11.png" alt="Letter Pic 2" style="height: 100px;">
-                <img src="image_12.png" alt="Letter Pic 3" style="height: 100px;">
+                <img src="image_10.png" alt="Letter Pic 1" style="height: 110px;">
+                <img src="image_11.png" alt="Letter Pic 2" style="height: 110px;">
+                <img src="image_12.png" alt="Letter Pic 3" style="height: 110px;">
             </div>
             <p style="text-align: center; margin-top: 15px; font-weight: bold; color: var(--accent-color);">အမြဲတမ်း ပျော်ရွှင်ပါစေ 💌</p>
         </div>
 
         <!-- Little Things Card -->
         <div class="card" style="text-align: left;">
-            <div style="font-size: 13px; color: var(--soft-text); text-transform: uppercase; text-align: center;">THE LITTLE THINGS THAT MAKE ME SMILE</div>
+            <div style="font-size: 12px; color: var(--soft-text); text-transform: uppercase; text-align: center; letter-spacing: 1px;">THE LITTLE THINGS THAT MAKE ME SMILE</div>
             <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 10px; font-size: 14px;">
                 <div>🌸 အမရဲ့ အပြုံးလေး</div>
                 <div>☕ အကြံဉာဏ်ကောင်းလေးများ</div>
@@ -169,23 +173,22 @@
                 <div>🐾 တိရစ္ဆာန်တိုင်း ချစ်တတ်တဲ့ စိတ်</div>
             </div>
             <div class="gallery-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 15px;">
-                <img src="image_13.png" alt="Smile 1" style="height: 100px;">
-                <img src="image_14.png" alt="Smile 2" style="height: 100px;">
-                <img src="image_15.png" alt="Smile 3" style="height: 100px;">
+                <img src="image_13.png" alt="Smile 1" style="height: 110px;">
+                <img src="image_14.png" alt="Smile 2" style="height: 110px;">
+                <img src="image_15.png" alt="Smile 3" style="height: 110px;">
             </div>
         </div>
 
-        <!-- QR Code & Outro Card -->
+        <!-- Outro Card -->
         <div class="card">
-            <div style="font-size: 13px; color: var(--soft-text); text-transform: uppercase;">ONE LAST THING...</div>
-            <h2 style="color: var(--accent-color); margin: 10px 0;">I LOVE YOU</h2>
+            <h2 style="color: var(--accent-color); margin: 5px 0 12px 0; font-size: 20px;">ပျော်ရွှင်စရာမွေးနေ့တစ်နေ့လေးဖြစ်ပါစေ။💐</h2>
             
             <div class="qr-container">
-                <p style="font-size: 13px; color: var(--soft-text);">Scan QR to Share Website</p>
+                <p style="font-size: 12px; color: var(--soft-text);">Scan QR to Share Website</p>
                 <div id="qrcode"></div>
             </div>
             
-            <p style="margin-top: 20px; font-size: 13px; opacity: 0.8;">မွေးနေ့မှစပြီး အရာရာတိုင်း အဆင်ပြေချောမွေ့ပါစေ 💛</p>
+            <p style="margin-top: 18px; font-size: 13px; opacity: 0.85;">မွေးနေ့မှစပြီး အရာရာတိုင်း အဆင်ပြေချောမွေ့ပါစေ 💛</p>
         </div>
     </div>
 
@@ -195,7 +198,26 @@
             if (pass === '20315') {
                 document.getElementById('lock-screen').style.display = 'none';
                 document.getElementById('main-content').style.display = 'flex';
-                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                
+                // Trigger Flowers & Butterflies Confetti Animation
+                var duration = 3 * 1000;
+                var animationEnd = Date.now() + duration;
+                var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+                function randomInRange(min, max) {
+                    return Math.random() * (max - min) + min;
+                }
+
+                var interval = setInterval(function() {
+                    var timeLeft = animationEnd - Date.now();
+                    if (timeLeft <= 0) {
+                        return clearInterval(interval);
+                    }
+                    var particleCount = 50 * (timeLeft / duration);
+                    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#ffb703', '#f4acb7', '#ffccd5', '#ffffff'] }));
+                    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#ffb703', '#f4acb7', '#ffccd5', '#ffffff'] }));
+                }, 250);
+
             } else {
                 alert('စကားဝှက် မှားယွင်းနေပါသည်။ (Password: 20315)');
             }
@@ -207,10 +229,13 @@
 
         function toggleMusic() {
             if (!isPlaying) {
-                music.play();
-                vinyl.classList.add('playing');
-                event.target.textContent = '❚❚ သီချင်းရပ်ရန်';
-                isPlaying = true;
+                music.play().then(() => {
+                    vinyl.classList.add('playing');
+                    event.target.textContent = '❚❚ သီချင်းရပ်ရန်';
+                    isPlaying = true;
+                }).catch(e => {
+                    alert('သီချင်းဖွင့်၍မရပါ။ ဖုန်း သို့မဟုတ် ဘရောက်ဇာ ခွင့်ပြုချက် စစ်ဆေးပါ။');
+                });
             } else {
                 music.pause();
                 vinyl.classList.remove('playing');
@@ -223,9 +248,9 @@
         window.onload = function() {
             new QRCode(document.getElementById("qrcode"), {
                 text: window.location.href,
-                width: 128,
-                height: 128,
-                colorDark: "#2b1215",
+                width: 110,
+                height: 110,
+                colorDark: "#1a080a",
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });

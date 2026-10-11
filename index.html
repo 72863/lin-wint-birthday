@@ -9,119 +9,103 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
-            --bg-color: #1a080a;
-            --card-bg: rgba(64, 25, 29, 0.85);
+            --bg-color: #12070a;
+            --card-bg: rgba(50, 20, 24, 0.85);
             --accent-color: #f4acb7;
             --text-color: #fefae0;
             --soft-text: #ffb703;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pyidaungsu', 'Outfit', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-x: hidden; }
-        
-        /* Password Screen with Video Background */
+
+        /* Lock / Countdown Screen */
         #lock-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px;
-            overflow: hidden;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('bg_video.mp4') no-repeat center center/cover;
+            background-color: var(--bg-color);
+            z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center;
         }
-        #lock-video-bg {
-            position: absolute; top: 50%; left: 50%;
-            min-width: 100%; min-height: 100%; width: auto; height: auto;
-            transform: translate(-50%, -50%);
-            object-fit: cover; z-index: -2;
-        }
-        .lock-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); z-index: -1;
-        }
-        .lock-box { 
-            position: relative; z-index: 1;
-            background: rgba(43, 18, 21, 0.85); backdrop-filter: blur(12px); 
-            padding: 35px; border-radius: 20px; text-align: center; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 100%; max-width: 350px; 
-            border: 1px solid rgba(244, 172, 183, 0.3); 
-        }
-        .lock-box h2 { margin-bottom: 15px; font-size: 20px; color: var(--accent-color); text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .lock-box input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 10px; border: 1px solid var(--accent-color); background: rgba(0,0,0,0.5); color: white; text-align: center; font-size: 18px; letter-spacing: 4px; outline: none; }
-        .lock-box button { background: var(--accent-color); color: #1a080a; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; transition: 0.3s; }
-        .lock-box button:hover { background: #ffccd5; transform: scale(1.02); }
+        .lock-content h1 { font-size: 26px; color: var(--text-color); margin-bottom: 8px; font-weight: 300; letter-spacing: 2px; }
+        .lock-content h2 { font-size: 32px; color: var(--accent-color); margin-bottom: 15px; font-weight: bold; text-shadow: 0 2px 10px rgba(244,172,183,0.4); }
+        .lock-content p { font-size: 14px; opacity: 0.8; margin-bottom: 30px; font-style: italic; }
+        
+        .countdown-grid { display: flex; gap: 15px; justify-content: center; margin-bottom: 35px; }
+        .time-box { background: rgba(255,255,255,0.06); backdrop-filter: blur(10px); padding: 15px 12px; border-radius: 12px; min-width: 65px; border: 1px solid rgba(255,255,255,0.1); }
+        .time-num { font-size: 24px; font-weight: bold; color: var(--text-color); display: block; }
+        .time-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; margin-top: 4px; display: block; }
 
-        /* Main Container */
-        .container { width: 100%; max-width: 480px; background: var(--bg-color); min-height: 100vh; padding: 20px; display: none; flex-direction: column; gap: 25px; padding-bottom: 50px; animation: fadeIn 1s ease-in-out; }
+        .unlock-btn { background: rgba(255,255,255,0.08); border: 1px solid var(--accent-color); color: var(--text-color); padding: 12px 25px; border-radius: 30px; font-size: 14px; cursor: pointer; transition: 0.3s; backdrop-filter: blur(5px); letter-spacing: 1px; }
+        .unlock-btn:hover { background: var(--accent-color); color: var(--bg-color); transform: scale(1.05); }
+
+        /* Gift Box Step */
+        #gift-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color); z-index: 9988; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center;
+        }
+        .gift-box-icon { font-size: 70px; margin-bottom: 20px; animation: bounce 2s infinite; cursor: pointer; text-shadow: 0 0 20px rgba(244,172,183,0.6); }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* Main Website Content */
+        .container { width: 100%; max-width: 480px; background: var(--bg-color); min-height: 100vh; padding: 20px; display: none; flex-direction: column; gap: 25px; padding-bottom: 80px; animation: fadeIn 1s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .header { text-align: center; font-size: 13px; letter-spacing: 3px; color: var(--soft-text); text-transform: uppercase; font-weight: 600; }
-        .main-title { text-align: center; font-size: 22px; color: var(--text-color); margin-top: 5px; font-weight: bold; text-shadow: 0 2px 10px rgba(244,172,183,0.3); }
+        .header { text-align: center; font-size: 12px; letter-spacing: 3px; color: var(--soft-text); text-transform: uppercase; font-weight: 600; }
+        .main-title { text-align: center; font-size: 24px; color: var(--text-color); margin-top: 5px; font-weight: bold; text-shadow: 0 2px 10px rgba(244,172,183,0.3); }
 
         .card { background: var(--card-bg); backdrop-filter: blur(12px); border-radius: 24px; padding: 22px; box-shadow: 0 8px 25px rgba(0,0,0,0.4); text-align: center; position: relative; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.3s; }
-        .card:hover { transform: translateY(-3px); }
         .card img { width: 100%; border-radius: 16px; object-fit: cover; margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         
         .note-text { text-align: left; line-height: 1.9; font-size: 15px; margin-top: 10px; opacity: 0.95; }
         
-        .grid-reasons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; text-align: left; }
-        .reason-item { background: rgba(255,255,255,0.06); padding: 14px; border-radius: 12px; font-size: 14px; border: 1px solid rgba(255,255,255,0.04); }
-        .reason-num { color: var(--soft-text); font-weight: bold; display: block; font-size: 12px; margin-bottom: 3px; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
+        .gallery-grid img { height: 180px; border-radius: 12px; background: #222; }
 
-        .tags-box { display: flex; justify-content: center; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
-        .tag { background: var(--accent-color); color: #1a080a; padding: 6px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; box-shadow: 0 2px 8px rgba(244,172,183,0.3); }
-
-        /* Music Player */
-        .music-player { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-        .vinyl { width: 130px; height: 130px; border-radius: 50%; background: #111; border: 4px solid #333; display: flex; justify-content: center; align-items: center; animation: spin 4s linear infinite; animation-play-state: paused; margin: 10px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .vinyl.playing { animation-play-state: running; }
-        .vinyl-inner { width: 45px; height: 45px; background: var(--accent-color); border-radius: 50%; border: 2px dashed #111; }
+        /* Floating Spotify Player Widget */
+        .spotify-widget { position: fixed; bottom: 20px; right: 20px; background: rgba(30,30,30,0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 30px; display: flex; align-items: center; gap: 10px; z-index: 1000; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .spotify-disc { width: 25px; height: 25px; border-radius: 50%; background: #111; border: 2px solid var(--accent-color); animation: spin 3s linear infinite; animation-play-state: paused; }
+        .spotify-disc.playing { animation-play-state: running; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        .play-btn { background: var(--accent-color); color: #1a080a; border: none; padding: 10px 24px; border-radius: 25px; cursor: pointer; font-weight: bold; margin-top: 5px; box-shadow: 0 4px 12px rgba(244,172,183,0.3); transition: 0.2s; }
-        .play-btn:hover { background: #ffccd5; transform: scale(1.05); }
+        .spotify-text { font-size: 11px; color: var(--text-color); font-weight: 600; letter-spacing: 1px; }
 
-        /* QR Section */
         .qr-container { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 15px; }
         #qrcode { background: white; padding: 12px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-
-        .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
-        .gallery-grid img { height: 170px; border-radius: 12px; }
     </style>
 </head>
 <body>
 
-    <!-- Password Screen with Video Background -->
+    <!-- Step 1: Countdown Screen (เหมือนในวิดีโอ) -->
     <div id="lock-screen">
-        <video autoplay muted loop playsinline id="lock-video-bg">
-            <source src="bg_video.mp4" type="video/mp4">
-        </video>
-        <div class="lock-overlay"></div>
-        <div class="lock-box">
-            <h2>🦋 Enter Password 🦋</h2>
-            <input type="password" id="passcode-input" placeholder="•••••">
-            <button onclick="checkPassword()">ဝင်မည်</button>
+        <div class="lock-content">
+            <h1>MENGHITUNG HARI</h1>
+            <h2>Her Special Day is Coming</h2>
+            <p>Sesuatu yang indah sedang menunggu suamimu ✨</p>
+            
+            <div class="countdown-grid">
+                <div class="time-box"><span class="time-num">00</span><span class="time-label">Hari</span></div>
+                <div class="time-box"><span class="time-num">00</span><span class="time-label">Jam</span></div>
+                <div class="time-box"><span class="time-num">00</span><span class="time-label">Menit</span></div>
+                <div class="time-box"><span class="time-num">00</span><span class="time-label">Detik</span></div>
+            </div>
+
+            <button class="unlock-btn" onclick="goToGift()">⏳ Beberapa detik lagi...</button>
         </div>
+    </div>
+
+    <!-- Step 2: Gift Box Screen (เหมือนในวิดีโอ) -->
+    <div id="gift-screen">
+        <div class="gift-box-icon" onclick="openMainSite()">🎁</div>
+        <p style="color: var(--accent-color); font-size: 15px; letter-spacing: 1px;">ADA SESUATU UNTUKMU</p>
+        <p style="font-size: 12px; opacity: 0.7; margin-top: 5px;">Click untuk membuka hadiahmu ✨</p>
     </div>
 
     <!-- Main Website Content -->
     <div class="container" id="main-content">
-        <div class="header">A LITTLE BIRTHDAY GIFT FOR</div>
-        <div class="main-title">Ma Lin Wint အတွက်မွေးနေ့လက်ဆောင်</div>
+        <div class="header">A LOVE LETTER FOR YOU</div>
+        <div class="main-title">Your Special Day</div>
+        <p style="text-align: center; font-size: 13px; opacity: 0.8; margin-top: -15px;">Created with love, just for you</p>
 
+        <!-- Top Polaroid Gallery -->
         <div class="card">
-            <h3 style="color: var(--soft-text); font-size: 13px; margin-bottom: 5px; letter-spacing: 1px;">HAPPY BIRTHDAY</h3>
-            <img src="watermarked_img_7962830949458966425.jpg" alt="Birthday Illustration">
-            <p style="margin-top: 12px; font-weight: bold; color: var(--accent-color); font-size: 16px;">Happy Birthday Lin Wint! ✨</p>
-        </div>
-
-        <div class="card" style="text-align: left;">
-            <div style="font-size: 12px; color: var(--soft-text); text-transform: uppercase; letter-spacing: 1px;">A BIRTHDAY NOTE</div>
-            <h3 style="margin: 6px 0 15px 0; color: var(--accent-color);">Ma Lin Wint ရေ...</h3>
-            <p class="note-text">
-                ဒီနေ့မှာ ကျရောက်တဲ့ အမရဲ့ မွေးနေ့သည် ရှေ့ဆက်လျှောက်လှမ်းမယ့် နှစ်ပေါင်းများစွာအထိ စိတ်၏ချမ်းသာခြင်း၊ ကိုယ်၏ကျန်းမာခြင်းတို့နဲ့ ပြည့်စုံပါစေ။<br><br>
-                အမနဲ့ ခင်ခွင့်ရတာ၊ အမဆီက ကောင်းမွန်တဲ့ အကြံဉာဏ်တွေ၊ အကူအညီတွေ ရရှိခဲ့တာဟာ ကျွန်တော်အတွက် အမြဲတမ်း ဝမ်းသာစရာပါ။ အမရဲ့ သဘောထားပြည့်ဝမှုနဲ့ ကြိုးစားမှုတွေကိုလည်း အမြဲ လေးစားအားကျရပါတယ်။<br><br>
-                ဒီနှစ်မှာ အမလိုချင်တဲ့ ရည်မှန်းချက်တွေ၊ အိမ်မက်တွေ အကုန်လုံး အမြန်ဆုံး အကောင်အထည်ပေါ်ပြီး၊ စီးပွား/လုပ်ငန်းကိုင်ငန်း/ပညာရေးတွေလည်း ဒီထက်မက အောင်မြင်တိုးတက်ပါစေ။ အမြဲတမ်းစိတ်ချမ်းသာ အပြုံးတွေပွင့်လန်းနိုင်ပါစေ။ 🌸
-            </p>
-        </div>
-
-        <div class="card">
-            <div style="font-size: 12px; color: var(--soft-text); text-transform: uppercase; letter-spacing: 1px;">ONE OF MY FAVOURITE MOMENTS</div>
-            <h3 style="margin: 6px 0; color: var(--accent-color);">အမနဲ့ ခင်ခွင့်ရတာ</h3>
             <div class="gallery-grid">
                 <img src="image_6.png" alt="Memory 1">
                 <img src="image_7.png" alt="Memory 2">
@@ -130,67 +114,34 @@
             </div>
         </div>
 
+        <!-- Birthday Note (Letter) -->
         <div class="card" style="text-align: left;">
-            <div style="font-size: 12px; color: var(--soft-text); text-transform: uppercase; text-align: center; letter-spacing: 1px;">အမနဲ့ ခင်ခင်ရတဲ့ အကြောင်းများ</div>
-            <div class="grid-reasons">
-                <div class="reason-item"><span class="reason-num">01</span>အမက ခင်တတ်တယ်</div>
-                <div class="reason-item"><span class="reason-num">02</span>အမြဲတမ်း ကူညီတတ်တယ်</div>
-                <div class="reason-item"><span class="reason-num">03</span>အကြံကောင်းတွေလဲ ပေးတယ်</div>
-                <div class="reason-item"><span class="reason-num">04</span>မုန့်လဲ ကျွေးတယ် ✨</div>
-            </div>
-        </div>
-
-        <div class="card music-player">
-            <div style="font-size: 12px; color: var(--soft-text); text-transform: uppercase; letter-spacing: 1px;">THIS SONG REMINDS ME OF YOU</div>
-            <div class="vinyl" id="vinyl">
-                <div class="vinyl-inner"></div>
-            </div>
-            <div style="font-weight: bold; font-size: 15px; color: var(--text-color);">Justin Bieber — Mistletoe</div>
-            <button class="play-btn" onclick="toggleMusic()">▶ သီချင်းဖွင့်ရန်</button>
-            <audio id="bg-music" loop>
-                <source src="https://cdns-preview--d.dzcdn.net/stream/c-deda73b7f83731114b77873830c29753-3.mp3" type="audio/mp3">
-            </audio>
-        </div>
-
-        <div class="card">
-            <div style="font-size: 12px; color: var(--soft-text); text-transform: uppercase; letter-spacing: 1px;">IF I HAD TO DESCRIBE YOU IN THREE WORDS</div>
-            <div class="tags-box">
-                <span class="tag">အရက်သောက်</span>
-                <span class="tag">အရင်မှောက်</span>
-            </div>
-            <p style="margin-top: 15px; font-size: 14px; opacity: 0.95;">အရက်သောက်တိုင်း အမြဲတမ်း အရင်အိပ်လို့ :) ✨</p>
-        </div>
-
-        <div class="card" style="text-align: left;">
-            <div style="font-size: 12px; color: var(--soft-text); text-transform: uppercase; text-align: center; letter-spacing: 1px;">A LETTER FOR YOU</div>
-            <h3 style="margin: 6px 0 12px 0; color: var(--accent-color); text-align: center;">အမအတွက် စာလေးတစ်စောင်</h3>
+            <div style="font-size: 12px; color: var(--soft-text); text-transform: uppercase; letter-spacing: 1px; text-align: center;">HAPPY BIRTHDAY</div>
+            <h3 style="margin: 8px 0 15px 0; color: var(--accent-color); text-align: center;">HAPPY BIRTHDAY SAYANGKUUU 🤍</h3>
             <p class="note-text">
-                အမနဲ့ ခင်ခွင့်ရတာဟာ ကျွန်တော့်အတွက် အမြဲတမ်း ဝမ်းသာစရာပါ။ အမဆီက ရခဲ့တဲ့ အကြံဉာဏ်နဲ့ အကူအညီတွေကိုလည်း မမေ့ပါဘူး။
+                Selamat ulang tahun yaa sayang! Hari hari yang spesial banget karena hari ini adalah hari lahir orang yang paling berarti di hidupku.<br><br>
+                Terima kasih selalu ada, udah bikin hariku lebih bahagia, dan udah menjadi alasan aku tersenyum setiap hari. Aku berharapkan bunga lini kau dan dapiyu sayang sekarang.<br><br>
+                Di umur yang baru ini, aku cuma mau doain semoga semua hal baik selalu datang di hidup sayang. Semoga sehat selalu, panjang umur, dimudahkan segala urusannya, dan semua impian sayang bisa tercapai satu persatu.<br><br>
+                Tetap jadi pribadi yang kuas, baik, dan baper seperti sekarang. Jangan lupa kalau ada apa-apa buar sayang dalam keadaan apa pun.<br><br>
+                Sekali lagi, selamat ulang tahun sayang. Semoga hari ini penuh kebahagiaan dan tahun ini menjadi tahun untuk selamanya.<br><br>
+                I love you, today, tomorrow, and always. 🤍
             </p>
-            <div class="gallery-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 15px;">
-                <img src="image_10.png" alt="Letter Pic 1" style="height: 110px;">
-                <img src="image_11.png" alt="Letter Pic 2" style="height: 110px;">
-                <img src="image_12.png" alt="Letter Pic 3" style="height: 110px;">
-            </div>
-            <p style="text-align: center; margin-top: 15px; font-weight: bold; color: var(--accent-color);">အမြဲတမ်း ပျော်ရွှင်ပါစေ 💌</p>
+            <p style="text-align: center; margin-top: 20px; font-weight: bold; color: var(--accent-color);">အမြဲတမ်းစိတ်ချမ်းသာ အပြုံးတွေပွင့်လန်းနိုင်ပါစေ။ 🌸</p>
         </div>
 
-        <div class="card" style="text-align: left;">
-            <div style="font-size: 12px; color: var(--soft-text); text-transform: uppercase; text-align: center; letter-spacing: 1px;">THE LITTLE THINGS THAT MAKE ME SMILE</div>
-            <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 10px; font-size: 14px;">
-                <div>🌸 အမရဲ့ အပြုံးလေး</div>
-                <div>☕ အကြံဉာဏ်ကောင်းလေးများ</div>
-                <div>✨ ကြိုးစားတတ်တဲ့စိတ်</div>
-                <div>🎀 အမရဲ့ ချစ်စရာကောင်းတဲ့ အပြုအမူ</div>
-                <div>🐾 တိရစ္ဆာန်တိုင်း ချစ်တတ်တဲ့ စိတ်</div>
-            </div>
-            <div class="gallery-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 15px;">
-                <img src="image_13.png" alt="Smile 1" style="height: 110px;">
-                <img src="image_14.png" alt="Smile 2" style="height: 110px;">
-                <img src="image_15.png" alt="Smile 3" style="height: 110px;">
+        <!-- Memories Gallery -->
+        <div class="card">
+            <div style="font-size: 12px; color: var(--soft-text); text-transform: uppercase; letter-spacing: 1px;">OUR MEMORIES</div>
+            <h3 style="margin: 6px 0; color: var(--accent-color);">every moment captured in love ✨</h3>
+            <div class="gallery-grid" style="margin-top: 15px;">
+                <img src="image_10.png" alt="Pic 1">
+                <img src="image_11.png" alt="Pic 2">
+                <img src="image_12.png" alt="Pic 3">
+                <img src="image_13.png" alt="Pic 4">
             </div>
         </div>
 
+        <!-- Outro Card -->
         <div class="card">
             <h2 style="color: var(--accent-color); margin: 5px 0 12px 0; font-size: 20px;">ပျော်ရွှင်စရာမွေးနေ့တစ်နေ့လေးဖြစ်ပါစေ။💐</h2>
             
@@ -203,53 +154,64 @@
         </div>
     </div>
 
+    <!-- Floating Spotify Music Player Widget (เหมือนในวิดีโอ 🎵) -->
+    <div class="spotify-widget" onclick="toggleMusic()">
+        <div class="spotify-disc" id="disc"></div>
+        <span class="spotify-text" id="music-status">▶ LIL. WINTNY</span>
+    </div>
+
+    <audio id="bg-music" loop>
+        <source src="https://cdns-preview--d.dzcdn.net/stream/c-deda73b7f83731114b77873830c29753-3.mp3" type="audio/mp3">
+    </audio>
+
     <script>
-        function checkPassword() {
-            const pass = document.getElementById('passcode-input').value;
-            if (pass === '20315') {
-                document.getElementById('lock-screen').style.display = 'none';
-                document.getElementById('main-content').style.display = 'flex';
-                
-                var duration = 3 * 1000;
-                var animationEnd = Date.now() + duration;
-                var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+        function goToGift() {
+            document.getElementById('lock-screen').style.display = 'none';
+            document.getElementById('gift-screen').style.display = 'flex';
+        }
 
-                function randomInRange(min, max) {
-                    return Math.random() * (max - min) + min;
-                }
+        function openMainSite() {
+            document.getElementById('gift-screen').style.display = 'none';
+            document.getElementById('main-content').style.display = 'flex';
 
-                var interval = setInterval(function() {
-                    var timeLeft = animationEnd - Date.now();
-                    if (timeLeft <= 0) {
-                        return clearInterval(interval);
-                    }
-                    var particleCount = 50 * (timeLeft / duration);
-                    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#ffb703', '#f4acb7', '#ffccd5', '#ffffff'] }));
-                    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#ffb703', '#f4acb7', '#ffccd5', '#ffffff'] }));
-                }, 250);
+            // Trigger Flowers & Butterflies Confetti Animation
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
 
-            } else {
-                alert('စကားဝှက် မှားယွင်းနေပါသည်။ (Password: 20315)');
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
             }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#ffb703', '#f4acb7', '#ffccd5', '#ffffff'] }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#ffb703', '#f4acb7', '#ffccd5', '#ffffff'] }));
+            }, 250);
         }
 
         let isPlaying = false;
         const music = document.getElementById('bg-music');
-        const vinyl = document.getElementById('vinyl');
+        const disc = document.getElementById('disc');
+        const musicStatus = document.getElementById('music-status');
 
         function toggleMusic() {
             if (!isPlaying) {
                 music.play().then(() => {
-                    vinyl.classList.add('playing');
-                    event.target.textContent = '❚❚ သီချင်းရပ်ရန်';
+                    disc.classList.add('playing');
+                    musicStatus.textContent = '❚❚ PLAYING';
                     isPlaying = true;
                 }).catch(e => {
                     alert('သီချင်းဖွင့်၍မရပါ။');
                 });
             } else {
                 music.pause();
-                vinyl.classList.remove('playing');
-                event.target.textContent = '▶ သီချင်းဖွင့်ရန်';
+                disc.classList.remove('playing');
+                musicStatus.textContent = '▶ LIL. WINTNY';
                 isPlaying = false;
             }
         }
@@ -259,7 +221,7 @@
                 text: window.location.href,
                 width: 110,
                 height: 110,
-                colorDark: "#1a080a",
+                colorDark: "#12070a",
                 colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.H
             });

@@ -3,219 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ma Lin Wint အတွက်မွေးနေ့လက်ဆောင်</title>
-    <link href="https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <title>Happy Birthday Scrapbook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pyidaungsu&family=Special+Elite&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #12070a;
-            --card-bg: rgba(40, 15, 18, 0.75); /* ဖောက်ထွင်းမြင်ရသော Card အရောင် */
-            --accent-color: #f4acb7;
-            --text-color: #fefae0;
-            --soft-text: #ffb703;
+            --primary-bg: #5c0613;
+            --card-bg: #fdfbf7;
+            --text-color: #2c2c2c;
+            --accent-color: #8b0000;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pyidaungsu', 'Outfit', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-x: hidden; }
 
-        /* Password / Lock Screen with Video Background */
-        #lock-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px;
-            overflow: hidden; text-align: center;
+        body {
+            background-color: var(--primary-bg);
+            background-image: radial-gradient(#40040c 15%, transparent 16%), radial-gradient(#40040c 15%, transparent 16%);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            font-family: 'Pyidaungsu', 'Special Elite', cursive, sans-serif;
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        #lock-video-bg {
-            position: absolute; top: 50%; left: 50%;
-            min-width: 100%; min-height: 100%; width: auto; height: auto;
-            transform: translate(-50%, -50%);
-            object-fit: cover; z-index: -2;
+
+        .scrapbook-container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 2px dashed #d4af37;
+            position: relative;
+            transform: rotate(-1deg);
         }
-        .lock-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.35); z-index: -1; /* အမှောင်ခံကို လျော့ချထား၍ BG ပိုပေါ်စေသည် */
+
+        .scrapbook-container::before {
+            content: "";
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px dashed #ccc;
         }
-        .lock-box { 
-            position: relative; z-index: 1;
-            background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(10px); /* အနီရောင်အကွက်ကို ဖျောက်ပြီး ဖောက်ထွင်းမြင်ရအောင် လုပ်ထားသည် */
-            padding: 35px; border-radius: 20px; text-align: center; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6); width: 100%; max-width: 350px; 
-            border: 1px solid rgba(244, 172, 183, 0.3); 
+
+        h1 {
+            text-align: center;
+            font-family: 'Special Elite', cursive;
+            color: var(--accent-color);
+            font-size: 2.2rem;
+            margin-bottom: 5px;
         }
-        .lock-box h2 { margin-bottom: 15px; font-size: 20px; color: var(--accent-color); text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-        .lock-box input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 10px; border: 1px solid var(--accent-color); background: rgba(0,0,0,0.6); color: white; text-align: center; font-size: 18px; letter-spacing: 4px; outline: none; }
-        .lock-box button { background: var(--accent-color); color: #1a080a; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; transition: 0.3s; }
-        .lock-box button:hover { background: #ffccd5; transform: scale(1.02); }
 
-        /* Main Website Content */
-        .container { width: 100%; max-width: 480px; background: var(--bg-color); min-height: 100vh; padding: 20px; display: none; flex-direction: column; gap: 25px; padding-bottom: 80px; animation: fadeIn 1s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .header { text-align: center; font-size: 12px; letter-spacing: 3px; color: var(--soft-text); text-transform: uppercase; font-weight: 600; }
-        .main-title { text-align: center; font-size: 24px; color: var(--text-color); margin-top: 5px; font-weight: bold; text-shadow: 0 2px 10px rgba(244,172,183,0.3); }
+        .subtitle {
+            text-align: center;
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 25px;
+        }
 
-        .card { background: var(--card-bg); backdrop-filter: blur(12px); border-radius: 24px; padding: 22px; box-shadow: 0 8px 25px rgba(0,0,0,0.4); text-align: center; position: relative; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.3s; }
-        .card img { width: 100%; border-radius: 16px; object-fit: cover; margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); background: rgba(255,255,255,0.05); min-height: 150px; }
-        
-        .note-text { text-align: left; line-height: 1.9; font-size: 15px; margin-top: 10px; opacity: 0.95; }
-        
-        .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
-        .gallery-grid img { height: 180px; border-radius: 12px; background: rgba(255,255,255,0.05); }
+        .polaroid {
+            background: white;
+            padding: 15px 15px 35px 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transform: rotate(2deg);
+            margin: 20px auto;
+            width: 80%;
+            max-width: 280px;
+            position: relative;
+        }
 
-        /* Floating Spotify Player Widget */
-        .spotify-widget { position: fixed; bottom: 20px; right: 20px; background: rgba(30,30,30,0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 30px; display: flex; align-items: center; gap: 10px; z-index: 1000; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .spotify-disc { width: 25px; height: 25px; border-radius: 50%; background: #111; border: 2px solid var(--accent-color); animation: spin 3s linear infinite; animation-play-state: paused; }
-        .spotify-disc.playing { animation-play-state: running; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        .spotify-text { font-size: 11px; color: var(--text-color); font-weight: 600; letter-spacing: 1px; }
+        .polaroid img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            filter: sepia(20%);
+        }
 
-        .qr-container { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 15px; }
-        #qrcode { background: white; padding: 12px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .polaroid p {
+            text-align: center;
+            margin: 10px 0 0 0;
+            font-family: 'Special Elite', cursive;
+            color: #444;
+        }
+
+        .section {
+            margin: 25px 0;
+            padding: 15px;
+            background: #fff;
+            border: 1px solid #e0dcd0;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .section h2 {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+
+        /* Envelope / Letter Style */
+        .envelope-box {
+            text-align: center;
+            cursor: pointer;
+            background: #f4eee1;
+            padding: 20px;
+            border: 1px dashed #b5a48b;
+            transition: 0.3s;
+        }
+
+        .envelope-box:hover {
+            background: #eae2d0;
+        }
+
+        .letter-content {
+            display: none;
+            margin-top: 15px;
+            font-style: italic;
+            line-height: 1.6;
+            background: #fffdf9;
+            padding: 15px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        /* Calendar highlight */
+        .mini-calendar {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .mini-calendar th, .mini-calendar td {
+            padding: 8px;
+        }
+
+        .highlight-date {
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #777;
+            margin-top: 30px;
+            font-family: 'Special Elite', cursive;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Password Screen with Video Background -->
-    <div id="lock-screen">
-        <video autoplay muted loop playsinline id="lock-video-bg">
-            <source src="bg_video.mp4" type="video/mp4">
-        </video>
-        <div class="lock-overlay"></div>
-        <div class="lock-box">
-            <h2>🦋 Enter Password 🦋</h2>
-            <input type="password" id="passcode-input" placeholder="•••••">
-            <button onclick="checkPassword()">ဝင်မည်</button>
+    <div class="scrapbook-container">
+        <h1>HAPPY BIRTHDAY</h1>
+        <div class="subtitle">~ Scrapbook Memories ~</div>
+
+        <!-- Polaroid Photo -->
+        <div class="polaroid" style="transform: rotate(-2deg);">
+            <img src="https://images.unsplash.com/photo-1513151233558-d860ಿಸಿ4ef9a1?w=500&auto=format&fit=crop&q=60" alt="Birthday Photo">
+            <p>Our Special Day ❤️</p>
         </div>
-    </div>
 
-    <!-- Main Website Content -->
-    <div class="container" id="main-content">
-        <div class="header">A LOVE LETTER FOR YOU</div>
-        <div class="main-title">Your Special Day</div>
-        <p style="text-align: center; font-size: 13px; opacity: 0.8; margin-top: -15px;">Created with love, just for you</p>
-
-        <!-- Top Polaroid Gallery -->
-        <div class="card">
-            <div class="gallery-grid">
-                <img src="./⁠Image_6.png" alt="Memory 1" onerror="this.src='https://via.placeholder.com/180?text=Image_6.png'">
-                <img src="./⁠image_7.png" alt="Memory 2" onerror="this.src='https://via.placeholder.com/180?text=Image_7.png'">
-                <img src="./⁠image_8.png" alt="Memory 3" onerror="this.src='https://via.placeholder.com/180?text=Image_8.png'">
-                <img src="./⁠image_9.png" alt="Memory 4" onerror="this.src='https://via.placeholder.com/180?text=Image_9.png'">
+        <!-- Message / Love Letter Section -->
+        <div class="section">
+            <h2>💌 Special Message</h2>
+            <div class="envelope-box" onclick="toggleLetter()">
+                <span>စာအိတ်ကို နှိပ်၍ မွေးနေ့ဆုတောင်းစာ ဖတ်ရန် ✉️</span>
+            </div>
+            <div id="secretLetter" class="letter-content">
+                မွေးနေ့မှာ ပျော်ရွှင်စရာတွေနဲ့ ပြည့်စုံပါစေ။ လိုအဆန္ဒတွေအားလုံး တစ်ခုမကျန် ပြည့်ဝပါစေလို့ ဆုတောင်းပေးလိုက်ပါတယ်။ အမြဲတမ်း ပျော်ပျော်ရွှင်ရွှင်နဲ့ ဖြတ်သန်းနိုင်ပါစေနော်။ 🌸✨
             </div>
         </div>
 
-        <!-- Birthday Note (Letter) -->
-        <div class="card" style="text-align: left;">
-            <div style="font-size: 12px; color: var(--soft-text); text-transform: uppercase; letter-spacing: 1px; text-align: center;">HAPPY BIRTHDAY</div>
-            <h3 style="margin: 8px 0 15px 0; color: var(--accent-color); text-align: center;">HAPPY BIRTHDAY SAYANGKUUU 🤍</h3>
-            <p class="note-text">
-                Selamat ulang tahun yaa sayang! Hari hari yang spesial banget karena hari ini adalah hari lahir orang yang paling berarti di hidupku.<br><br>
-                Terima kasih selalu ada, udah bikin hariku lebih bahagia, dan udah menjadi alasan aku tersenyum setiap hari. Aku berharapkan bunga lini kau dan dapiyu sayang sekarang.<br><br>
-                Di umur yang baru ini, aku cuma mau doain semoga semua hal baik selalu datang di hidup sayang. Semoga sehat selalu, panjang umur, dimudahkan segala urusannya, dan semua impian sayang bisa tercapai satu persatu.<br><br>
-                Tetap jadi pribadi yang kuas, baik, dan baper seperti sekarang. Jangan lupa kalau ada apa-apa buar sayang dalam keadaan apa pun.<br><br>
-                Sekali lagi, selamat ulang tahun sayang. Semoga hari ini penuh kebahagiaan dan tahun ini menjadi tahun untuk selamanya.<br><br>
-                I love you, today, tomorrow, and always. 🤍
-            </p>
-            <p style="text-align: center; margin-top: 20px; font-weight: bold; color: var(--accent-color);">အမြဲတမ်းစိတ်ချမ်းသာ အပြုံးတွေပွင့်လန်းနိုင်ပါစေ။ 🌸</p>
+        <!-- Special Date Calendar Section -->
+        <div class="section">
+            <h2>📅 Special Date</h2>
+            <table class="mini-calendar">
+                <tr><th colspan="7" style="color: var(--accent-color);">September 2026</th></tr>
+                <tr style="color: #888;"><td>Su</td><td>Mo</td><td>Tu</td><td>We</td><td>Th</td><td>Fr</td><td>Sa</td></tr>
+                <tr><td></td><td></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
+                <tr><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td></tr>
+                <tr><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td></tr>
+                <tr><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td><td><span class="highlight-date">25</span></td><td>26</td></tr>
+                <tr><td>27</td><td>28</td><td>29</td><td>30</td><td></td><td></td><td></td></tr>
+            </table>
         </div>
 
-        <!-- Memories Gallery -->
-        <div class="card">
-            <div style="font-size: 12px; color: var(--soft-text); text-transform: uppercase; letter-spacing: 1px;">OUR MEMORIES</div>
-            <h3 style="margin: 6px 0; color: var(--accent-color);">every moment captured in love ✨</h3>
-            <div class="gallery-grid" style="margin-top: 15px;">
-                <img src="./⁠image_10.png" alt="Pic 1" onerror="this.src='https://via.placeholder.com/180?text=Image_10.png'">
-                <img src="./⁠image_11.png" alt="Pic 2" onerror="this.src='https://via.placeholder.com/180?text=Image_11.png'">
-                <img src="./⁠image_12.png" alt="Pic 3" onerror="this.src='https://via.placeholder.com/180?text=Image_12.png'">
-                <img src="./⁠image_13.png" alt="Pic 4" onerror="this.src='https://via.placeholder.com/180?text=Image_13.png'">
-            </div>
-        </div>
-
-        <!-- Outro Card -->
-        <div class="card">
-            <h2 style="color: var(--accent-color); margin: 5px 0 12px 0; font-size: 20px;">ပျော်ရွှင်စရာမွေးနေ့တစ်နေ့လေးဖြစ်ပါစေ။💐</h2>
-            
-            <div class="qr-container">
-                <p style="font-size: 12px; color: var(--soft-text);">Scan QR to Share Website</p>
-                <div id="qrcode"></div>
-            </div>
-            
-            <p style="margin-top: 18px; font-size: 13px; opacity: 0.85;">မွေးနေ့မှစပြီး အရာရာတိုင်း အဆင်ပြေချောမွေ့ပါစေ 💛</p>
+        <div class="footer-note">
+            Made with love, just for you. Forever & Always. 🤍
         </div>
     </div>
-
-    <!-- Floating Spotify Music Player Widget -->
-    <div class="spotify-widget" onclick="toggleMusic()">
-        <div class="spotify-disc" id="disc"></div>
-        <span class="spotify-text" id="music-status">▶ LIL. WINTNY</span>
-    </div>
-
-    <audio id="bg-music" loop>
-        <source src="https://cdns-preview--d.dzcdn.net/stream/c-deda73b7f83731114b77873830c29753-3.mp3" type="audio/mp3">
-    </audio>
 
     <script>
-        function checkPassword() {
-            const pass = document.getElementById('passcode-input').value;
-            if (pass === '20315') {
-                document.getElementById('lock-screen').style.display = 'none';
-                document.getElementById('main-content').style.display = 'flex';
-
-                // Trigger Flowers & Butterflies Confetti Animation
-                var duration = 3 * 1000;
-                var animationEnd = Date.now() + duration;
-                var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-                function randomInRange(min, max) {
-                    return Math.random() * (max - min) + min;
-                }
-
-                var interval = setInterval(function() {
-                    var timeLeft = animationEnd - Date.now();
-                    if (timeLeft <= 0) {
-                        return clearInterval(interval);
-                    }
-                    var particleCount = 50 * (timeLeft / duration);
-                    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#ffb703', '#f4acb7', '#ffccd5', '#ffffff'] }));
-                    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#ffb703', '#f4acb7', '#ffccd5', '#ffffff'] }));
-                }, 250);
-
+        function toggleLetter() {
+            const letter = document.getElementById('secretLetter');
+            if (letter.style.display === 'block') {
+                letter.style.display = 'none';
             } else {
-                alert('စကားဝှက် မှားယွင်းနေပါသည်။ (Password: 20315)');
+                letter.style.display = 'block';
             }
-        }
-
-        let isPlaying = false;
-        const music = document.getElementById('bg-music');
-        const disc = document.getElementById('disc');
-        const musicStatus = document.getElementById('music-status');
-
-        function toggleMusic() {
-            if (!isPlaying) {
-                music.play().then(() => {
-                    disc.classList.add('playing');
-                    musicStatus.textContent = '❚❚ PLAYING';
-                    isPlaying = true;
-                }).catch(e => {
-                    alert('သီချင်းဖွင့်၍မရပါ။');
-                });
-            } else {
-                music.pause();
-                disc.classList.remove('playing');
-                musicStatus.textContent = '▶ LIL. WINTNY';
-                isPlaying = false;
-            }
-        }
-
-        window.onload = function() {
-            new QRCode(document.getElementById("qrcode"), {
-                text: window.location.href,
-                width: 110,
-                height: 110,
-                colorDark: "#12070a",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
         }
     </script>
+
 </body>
 </html>

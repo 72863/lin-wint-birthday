@@ -6,10 +6,11 @@
     <title>Ma Lin Wint အတွက်မွေးနေ့လက်ဆောင်</title>
     <link href="https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
             --bg-color: #12070a;
-            --card-bg: rgba(40, 15, 18, 0.75);
+            --card-bg: rgba(40, 15, 18, 0.75); /* ဖောက်ထွင်းမြင်ရသော Card အရောင် */
             --accent-color: #f4acb7;
             --text-color: #fefae0;
             --soft-text: #ffb703;
@@ -31,59 +32,44 @@
         }
         .lock-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.35); z-index: -1;
+            background: rgba(0, 0, 0, 0.35); z-index: -1; /* အမှောင်ခံကို လျော့ချထား၍ BG ပိုပေါ်စေသည် */
         }
         .lock-box { 
             position: relative; z-index: 1;
-            background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(12px); 
+            background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(10px); /* အနီရောင်အကွက်ကို ဖျောက်ပြီး ဖောက်ထွင်းမြင်ရအောင် လုပ်ထားသည် */
             padding: 35px; border-radius: 20px; text-align: center; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.6); width: 100%; max-width: 350px; 
             border: 1px solid rgba(244, 172, 183, 0.3); 
-            animation: zoomIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        
         .lock-box h2 { margin-bottom: 15px; font-size: 20px; color: var(--accent-color); text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         .lock-box input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 10px; border: 1px solid var(--accent-color); background: rgba(0,0,0,0.6); color: white; text-align: center; font-size: 18px; letter-spacing: 4px; outline: none; }
         .lock-box button { background: var(--accent-color); color: #1a080a; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; transition: 0.3s; }
         .lock-box button:hover { background: #ffccd5; transform: scale(1.02); }
 
-        /* Main Website Content with PowerPoint-like Animations */
-        .container { width: 100%; max-width: 480px; background: var(--bg-color); min-height: 100vh; padding: 20px; display: none; flex-direction: column; gap: 25px; padding-bottom: 80px; }
+        /* Main Website Content */
+        .container { width: 100%; max-width: 480px; background: var(--bg-color); min-height: 100vh; padding: 20px; display: none; flex-direction: column; gap: 25px; padding-bottom: 80px; animation: fadeIn 1s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .header { text-align: center; font-size: 12px; letter-spacing: 3px; color: var(--soft-text); text-transform: uppercase; font-weight: 600; animation: slideDown 1s ease; }
-        .main-title { text-align: center; font-size: 24px; color: var(--text-color); margin-top: 5px; font-weight: bold; text-shadow: 0 2px 10px rgba(244,172,183,0.3); animation: slideDown 1.2s ease; }
+        .header { text-align: center; font-size: 12px; letter-spacing: 3px; color: var(--soft-text); text-transform: uppercase; font-weight: 600; }
+        .main-title { text-align: center; font-size: 24px; color: var(--text-color); margin-top: 5px; font-weight: bold; text-shadow: 0 2px 10px rgba(244,172,183,0.3); }
 
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-
-        .card { 
-            background: var(--card-bg); backdrop-filter: blur(12px); border-radius: 24px; padding: 22px; 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4); text-align: center; position: relative; 
-            border: 1px solid rgba(255,255,255,0.08); 
-            animation: slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) both;
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
-        }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(244,172,183,0.2); }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-        .card img { width: 100%; border-radius: 16px; object-fit: cover; margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); background: rgba(255,255,255,0.05); min-height: 150px; transition: transform 0.5s ease; }
-        .card img:hover { transform: scale(1.02); }
+        .card { background: var(--card-bg); backdrop-filter: blur(12px); border-radius: 24px; padding: 22px; box-shadow: 0 8px 25px rgba(0,0,0,0.4); text-align: center; position: relative; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.3s; }
+        .card img { width: 100%; border-radius: 16px; object-fit: cover; margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); background: rgba(255,255,255,0.05); min-height: 150px; }
         
         .note-text { text-align: left; line-height: 1.9; font-size: 15px; margin-top: 10px; opacity: 0.95; }
         
         .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
-        .gallery-grid img { height: 180px; border-radius: 12px; background: rgba(255,255,255,0.05); transition: transform 0.3s ease; }
-        .gallery-grid img:hover { transform: scale(1.04); }
+        .gallery-grid img { height: 180px; border-radius: 12px; background: rgba(255,255,255,0.05); }
 
         /* Floating Spotify Player Widget */
-        .spotify-widget { position: fixed; bottom: 20px; right: 20px; background: rgba(30,30,30,0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 30px; display: flex; align-items: center; gap: 10px; z-index: 1000; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); animation: bounceIn 1.5s ease; }
-        @keyframes bounceIn { 0% { opacity: 0; transform: scale(0.5); } 70% { transform: scale(1.1); } 100% { opacity: 1; transform: scale(1); } }
-        
+        .spotify-widget { position: fixed; bottom: 20px; right: 20px; background: rgba(30,30,30,0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 30px; display: flex; align-items: center; gap: 10px; z-index: 1000; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         .spotify-disc { width: 25px; height: 25px; border-radius: 50%; background: #111; border: 2px solid var(--accent-color); animation: spin 3s linear infinite; animation-play-state: paused; }
         .spotify-disc.playing { animation-play-state: running; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         .spotify-text { font-size: 11px; color: var(--text-color); font-weight: 600; letter-spacing: 1px; }
+
+        .qr-container { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 15px; }
+        #qrcode { background: white; padding: 12px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
@@ -147,7 +133,13 @@
         <!-- Outro Card -->
         <div class="card">
             <h2 style="color: var(--accent-color); margin: 5px 0 12px 0; font-size: 20px;">ပျော်ရွှင်စရာမွေးနေ့တစ်နေ့လေးဖြစ်ပါစေ။💐</h2>
-            <p style="margin-top: 10px; font-size: 13px; opacity: 0.85;">မွေးနေ့မှစပြီး အရာရာတိုင်း အဆင်ပြေချောမွေ့ပါစေ 💛</p>
+            
+            <div class="qr-container">
+                <p style="font-size: 12px; color: var(--soft-text);">Scan QR to Share Website</p>
+                <div id="qrcode"></div>
+            </div>
+            
+            <p style="margin-top: 18px; font-size: 13px; opacity: 0.85;">မွေးနေ့မှစပြီး အရာရာတိုင်း အဆင်ပြေချောမွေ့ပါစေ 💛</p>
         </div>
     </div>
 
@@ -157,9 +149,8 @@
         <span class="spotify-text" id="music-status">▶ LIL. WINTNY</span>
     </div>
 
-    <!-- Local Downloaded Song File -->
     <audio id="bg-music" loop>
-        <source src="song.mp3" type="audio/mp3">
+        <source src="https://cdns-preview--d.dzcdn.net/stream/c-deda73b7f83731114b77873830c29753-3.mp3" type="audio/mp3">
     </audio>
 
     <script>
@@ -169,7 +160,7 @@
                 document.getElementById('lock-screen').style.display = 'none';
                 document.getElementById('main-content').style.display = 'flex';
 
-                // Trigger Confetti Animation
+                // Trigger Flowers & Butterflies Confetti Animation
                 var duration = 3 * 1000;
                 var animationEnd = Date.now() + duration;
                 var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
@@ -205,7 +196,7 @@
                     musicStatus.textContent = '❚❚ PLAYING';
                     isPlaying = true;
                 }).catch(e => {
-                    alert('သီချင်းဖွင့်၍မရပါ။ song.mp3 ဖိုင် GitHub ထဲတွင် ရှိမရှိ စစ်ဆေးပါ။');
+                    alert('သီချင်းဖွင့်၍မရပါ။');
                 });
             } else {
                 music.pause();
@@ -213,6 +204,17 @@
                 musicStatus.textContent = '▶ LIL. WINTNY';
                 isPlaying = false;
             }
+        }
+
+        window.onload = function() {
+            new QRCode(document.getElementById("qrcode"), {
+                text: window.location.href,
+                width: 110,
+                height: 110,
+                colorDark: "#12070a",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
         }
     </script>
 </body>

@@ -146,10 +146,19 @@
                 <div class="vinyl-inner"></div>
             </div>
             <div style="font-weight: bold; font-size: 15px; color: var(--text-color);">Justin Bieber — Mistletoe</div>
-            <button class="play-btn" onclick="toggleMusic()">▶ သီချင်းဖွင့်ရန်</button>
-            <audio id="bg-music" loop>
-                <source src="https://cdns-preview--d.dzcdn.net/stream/c-deda73b7f83731114b77873830c29753-3.mp3" type="audio/mp3">
-            </audio>
+            <div style="width:100%; margin-top:8px; overflow:hidden; border-radius:14px;">
+                <iframe
+                    width="100%"
+                    height="200"
+                    src="https://www.youtube-nocookie.com/embed/LUjn3RpkcKY?rel=0"
+                    title="Justin Bieber - Mistletoe (Official Music Video)"
+                    style="border:0; display:block;"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <p style="font-size:12px; opacity:0.85;">သီချင်းမဖွင့်ရင် <a href="https://www.youtube.com/watch?v=LUjn3RpkcKY" target="_blank" rel="noopener noreferrer" style="color:var(--accent-color);">YouTube မှာ ဖွင့်ရန်</a></p>
         </div>
 
         <div class="card">
@@ -230,27 +239,6 @@
 
             } else {
                 alert('စကားဝှက် မှားယွင်းနေပါသည်။ (Password: 20315)');
-            }
-        }
-
-        let isPlaying = false;
-        const music = document.getElementById('bg-music');
-        const vinyl = document.getElementById('vinyl');
-
-        function toggleMusic() {
-            if (!isPlaying) {
-                music.play().then(() => {
-                    vinyl.classList.add('playing');
-                    event.target.textContent = '❚❚ သီချင်းရပ်ရန်';
-                    isPlaying = true;
-                }).catch(e => {
-                    alert('သီချင်းဖွင့်၍မရပါ။');
-                });
-            } else {
-                music.pause();
-                vinyl.classList.remove('playing');
-                event.target.textContent = '▶ သီချင်းဖွင့်ရန်';
-                isPlaying = false;
             }
         }
 
